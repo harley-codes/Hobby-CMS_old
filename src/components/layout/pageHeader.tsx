@@ -11,7 +11,7 @@ export function PageHeader({ headerText, children }: Props)
 {
 	return (
 		<Stack direction="row" justifyContent="space-between" alignItems="center" component="header" pb={3}>
-			<Typography variant="h4">Projects</Typography>
+			<Typography variant="h4">{headerText}</Typography>
 			<Stack direction="row" justifyContent="space-between" alignItems="flex-end" component="header" pb={3}>
 				{children}
 			</Stack>
