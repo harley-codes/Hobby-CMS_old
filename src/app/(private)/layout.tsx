@@ -18,7 +18,7 @@ export default async function RootLayout({ children }: Children)
 	return (
 		<html lang="en" className={robotoFont.className}>
 			<head />
-			<body>
+			<body style={{ background: 'whitesmoke' }}>
 				<CssBaselineWrapper />
 				<SessionProviderWrapper session={session}>
 					<AuthContextRequireAuth>

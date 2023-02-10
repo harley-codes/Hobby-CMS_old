@@ -5,8 +5,16 @@ import styles from './page.module.scss'
 import { GitHub as GitHubIcon, Login as LoginIcon } from '@mui/icons-material'
 import { Box, Button, Container, Stack, Typography } from '@mui/material'
 
+import { Lemon } from '@next/font/google'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+
+const robotoFont = Lemon({
+	weight: ['400'],
+	subsets: ['latin'],
+	display: 'swap',
+	fallback: ['Helvetica', 'Arial', 'sans-serif'],
+})
 
 export default function HomePage()
 {
@@ -17,7 +25,12 @@ export default function HomePage()
 		<main className={styles.main}>
 			<Container maxWidth="md" className={styles.contentWrapper}>
 				<Stack className={styles.content} padding={3}>
-					<Typography sx={{ typography: { sm: 'h2', xs: 'h3' } }} mb={2}>
+					<Typography
+						sx={{
+							typography: { sm: 'h2', xs: 'h3' },
+							textShadow: '2px 2px rgba(0,0,0,0.4)'
+						}}
+						mb={2} className={robotoFont.className}>
 						Hobby-CMS
 					</Typography>
 					{status === 'authenticated' && session.user?.image && (
