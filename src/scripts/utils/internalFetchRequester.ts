@@ -8,7 +8,8 @@ export class InternalFetchRequester
 		action,
 		data,
 		queryParams,
-		headers
+		headers,
+		cacheMode = 'no-store'
 	}: ApiRequest)
 	{
 		try
@@ -21,7 +22,8 @@ export class InternalFetchRequester
 			const requestResponse = await fetch(uri, {
 				method,
 				body: JSON.stringify(data),
-				headers
+				headers,
+				cache: cacheMode
 			})
 
 			const responseData: ApiResponse<TData> = JSON.parse(
@@ -128,7 +130,8 @@ interface ApiRequest
 	action: string,
 	data?: any,
 	queryParams?: Record<string, string>,
-	headers?: Record<string, string>
+	headers?: Record<string, string>,
+	cacheMode?: RequestCache
 }
 
 export interface ApiResponse<TData>

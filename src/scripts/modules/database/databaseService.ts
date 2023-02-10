@@ -1,5 +1,5 @@
 import { PostModel, PostModelDetail } from 'src/scripts/modules/database/models/postModel'
-import { ProjectModel } from 'src/scripts/modules/database/models/projectModel'
+import { ProjectModel, ProjectRecordModel } from 'src/scripts/modules/database/models/projectModel'
 
 export default interface DatabaseService
 {
@@ -7,6 +7,8 @@ export default interface DatabaseService
 	dispose(): Promise<void>
 
 	projectGetAll(): Promise<ProjectModel[]>
+
+	projectGetRecordsAll(): Promise<ProjectRecordModel[]>
 
 	projectCreate(name: string, active: boolean, token: string): Promise<ProjectModel>
 

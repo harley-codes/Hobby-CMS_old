@@ -1,11 +1,12 @@
 import { BaseControllerCS } from 'src/scripts/modules/controller/base/baseControllerCS'
 import { BaseControllerSS } from 'src/scripts/modules/controller/base/baseControllerSS'
 import { DatabaseServiceFactory } from 'src/scripts/modules/database/databaseServiceFactory'
-import { ProjectModel } from 'src/scripts/modules/database/models/projectModel'
+import { ProjectModel, ProjectRecordModel } from 'src/scripts/modules/database/models/projectModel'
 
 export interface ProjectControllerInterface
 {
 	getAll(): Promise<ProjectModel[]>
+	getRecordsAll(): Promise<ProjectRecordModel[]>
 	update(id: string, name: string, active: boolean, token: string): Promise<ProjectModel>
 	create(name: string, active: boolean): Promise<ProjectModel>
 	delete(id: string): Promise<boolean>
@@ -19,6 +20,19 @@ export class ProjectControllerCS extends BaseControllerCS implements ProjectCont
 			method: 'GET',
 			action: 'project',
 		})
+		if (!response.succeeded || !response.data)
+			throw response.responseMessage
+
+		return response.data
+	}
+
+	async getRecordsAll(): Promise<ProjectRecordModel[]>
+	{
+		const response = await this.api.Request<ProjectRecordModel[]>({
+			method: 'GET',
+			action: 'project/record',
+		})
+
 		if (!response.succeeded || !response.data)
 			throw response.responseMessage
 
@@ -73,6 +87,14 @@ export class ProjectControllerSS extends BaseControllerSS implements ProjectCont
 	{
 		const db = await DatabaseServiceFactory.getDefault()
 		const results = await db.projectGetAll()
+		await db.dispose()
+		return results
+	}
+
+	async getRecordsAll(): Promise<ProjectRecordModel[]>
+	{
+		const db = await DatabaseServiceFactory.getDefault()
+		const results = await db.projectGetRecordsAll()
 		await db.dispose()
 		return results
 	}

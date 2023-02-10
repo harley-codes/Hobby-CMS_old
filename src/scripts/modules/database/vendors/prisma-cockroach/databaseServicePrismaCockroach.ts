@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import DatabaseService from 'src/scripts/modules/database/databaseService'
 import { PostModel, PostModelDetail } from 'src/scripts/modules/database/models/postModel'
-import { ProjectModel } from 'src/scripts/modules/database/models/projectModel'
+import { ProjectModel, ProjectRecordModel } from 'src/scripts/modules/database/models/projectModel'
 
 
 export class DatabaseServicePrismaCockroach implements DatabaseService
@@ -21,6 +21,17 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 	async projectGetAll(): Promise<ProjectModel[]>
 	{
 		const result = await this.client.project.findMany()
+		return [...result]
+	}
+
+	async projectGetRecordsAll(): Promise<ProjectRecordModel[]>
+	{
+		const result = await this.client.project.findMany({
+			select: {
+				id: true,
+				name: true
+			}
+		})
 		return [...result]
 	}
 
