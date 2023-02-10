@@ -1,6 +1,6 @@
 'use client'
 
-import ProjectModel from '@/scripts/modules/database/models/projectModel'
+import { ProjectModel } from '@/scripts/modules/database/models/projectModel'
 
 import { InputPasswordOutlined, InputSwitch, InputText, ModalLoading, ModalNotification, ModalTextInput, OnModalTextInputResponseEvent } from '@/components'
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'

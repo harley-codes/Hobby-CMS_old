@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ProjectControllerSS } from 'src/scripts/modules/controller/projectController'
-import ProjectModel from 'src/scripts/modules/database/models/projectModel'
+import { ProjectModel } from 'src/scripts/modules/database/models/projectModel'
 import { getSessionApi } from 'src/scripts/utils/getSessionServer'
 import { ApiResponseBuilder } from 'src/scripts/utils/internalFetchRequester'
 

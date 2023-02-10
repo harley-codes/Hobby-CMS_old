@@ -1,7 +1,7 @@
 import { BaseControllerCS } from 'src/scripts/modules/controller/base/baseControllerCS'
 import { BaseControllerSS } from 'src/scripts/modules/controller/base/baseControllerSS'
 import { DatabaseServiceFactory } from 'src/scripts/modules/database/databaseServiceFactory'
-import ProjectModel from 'src/scripts/modules/database/models/projectModel'
+import { ProjectModel } from 'src/scripts/modules/database/models/projectModel'
 
 export interface ProjectControllerInterface
 {

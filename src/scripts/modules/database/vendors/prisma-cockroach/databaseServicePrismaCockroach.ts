@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import DatabaseService from 'src/scripts/modules/database/databaseService'
-import PostModel, { PostModelDetail } from 'src/scripts/modules/database/models/postModel'
-import ProjectModel from 'src/scripts/modules/database/models/projectModel'
+import { PostModel, PostModelDetail } from 'src/scripts/modules/database/models/postModel'
+import { ProjectModel } from 'src/scripts/modules/database/models/projectModel'
 
 
 export class DatabaseServicePrismaCockroach implements DatabaseService

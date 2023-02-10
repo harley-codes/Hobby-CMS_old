@@ -1,5 +1,5 @@
-import PostModel, { PostModelDetail } from 'src/scripts/modules/database/models/postModel'
-import ProjectModel from 'src/scripts/modules/database/models/projectModel'
+import { PostModel, PostModelDetail } from 'src/scripts/modules/database/models/postModel'
+import { ProjectModel } from 'src/scripts/modules/database/models/projectModel'
 
 export default interface DatabaseService
 {
