@@ -18,17 +18,17 @@ model Project {
 
 model Post {
     id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-    idProject       String     @db.Uuid
-    idFeaturedImage String     @db.Uuid
+    idProject       String?    @db.Uuid
+    idFeaturedImage String?    @db.Uuid
     name            String     @db.String()
-    description     String     @db.String()
+    description     String?    @db.String()
     date            BigInt     @db.Int8
     blocks          Json       @db.JsonB
     meta            Json       @db.JsonB
     tags            Json       @db.JsonB
     status          PostStatus
     // Relational
-    project         Project    @relation(fields: [idProject], references: [id])
+    project         Project?   @relation(fields: [idProject], references: [id])
     featuredImage   Image?     @relation(fields: [idFeaturedImage], references: [id])
 }
 

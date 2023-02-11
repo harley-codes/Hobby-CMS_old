@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import DatabaseService from 'src/scripts/modules/database/databaseService'
-import { PostModel, PostModelDetail } from 'src/scripts/modules/database/models/postModel'
+import getUnixTime from 'date-fns/getUnixTime'
+import DatabaseService, { PostUpdateData } from 'src/scripts/modules/database/databaseService'
+import { PostModel, PostModelDetail, PostStatus } from 'src/scripts/modules/database/models/postModel'
 import { ProjectModel, ProjectRecordModel } from 'src/scripts/modules/database/models/projectModel'
 
 
@@ -102,6 +103,18 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 		}
 	}
 
+	async postGetAll(): Promise<PostModel[]>
+	{
+		const result = await this.client.post.findMany()
+		const resultsMapped = result.map(x => ({
+			...x,
+			blocks: (x.blocks?.valueOf() ?? []) as Record<string, string>[],
+			meta: (x.meta?.valueOf() ?? {}) as Record<string, string>,
+			tags: (x.tags?.valueOf() ?? {}) as string[],
+		}))
+		return [...resultsMapped]
+	}
+
 	async postGetAllDetails(): Promise<PostModelDetail[]>
 	{
 		const result = await this.client.post.findMany({
@@ -114,5 +127,61 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 			}
 		})
 		return [...result]
+	}
+
+	async postCreate(name: string, projectId: string | null): Promise<PostModelDetail>
+	{
+		const result = await this.client.post.create({
+			data: {
+				idProject: projectId,
+				name,
+				description: '',
+				date: getUnixTime(new Date()),
+				blocks: [],
+				meta: {},
+				tags: [],
+				status: 'DISABLED'
+			}
+		})
+		return result
+	}
+
+	async postUpdate(postId: string, data: PostUpdateData): Promise<PostModel>
+	{
+		const result = await this.client.post.update({
+			where: { id: postId },
+			data: {...data}
+		})
+
+		return {
+			...result,
+			blocks: (result.blocks?.valueOf() ?? []) as Record<string, string>[],
+			meta: (result.meta?.valueOf() ?? {}) as Record<string, string>,
+			tags: (result.tags?.valueOf() ?? {}) as string[],
+		}
+	}
+
+	async postDetailUpdate(postId: string, projectId: string | null, name: string, postStatus: PostStatus): Promise<PostModelDetail>
+	{
+		const result = await this.client.post.update({
+			where: { id: postId },
+			data: {
+				name,
+				idProject: projectId,
+				status: postStatus
+			}
+		})
+
+		return result
+	}
+
+	async postDelete(id: string): Promise<boolean>
+	{
+		await this.client.post.delete({
+			where: {
+				id: id
+			}
+		})
+		return true
 	}
 }

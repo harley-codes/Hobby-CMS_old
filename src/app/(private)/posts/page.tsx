@@ -1,0 +1,21 @@
+import { PostsPageCsr } from '@/app/(private)/posts/page.csr'
+import { PostControllerSS } from '@/scripts/modules/controller/postController'
+import { ProjectControllerSS } from '@/scripts/modules/controller/projectController'
+import { createGlobalTrigger } from '@/scripts/utils/createGlobalTrigger'
+import { getServerSession } from 'next-auth'
+
+export const postsPageCreateProjectTrigger = createGlobalTrigger().Instance
+
+export default async function ProjectsPage()
+{
+	const session = await getServerSession()
+
+	if (!session) return <PostsPageCsr projectRecords={[]} postDetails={[]} />
+
+	const projectsAwaiter = new ProjectControllerSS().getRecordsAll()
+	const postsAwaiter = new PostControllerSS().getAllDetails()
+
+	const [projects, posts] = await Promise.all([projectsAwaiter, postsAwaiter])
+
+	return <PostsPageCsr projectRecords={projects} postDetails={posts} />
+}

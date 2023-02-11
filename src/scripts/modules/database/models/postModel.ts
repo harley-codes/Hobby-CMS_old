@@ -1,10 +1,10 @@
 export interface PostModel
 {
 	id: string
-	idProject: string
-	idFeaturedImage: string
+	idProject: string | null
+	idFeaturedImage: string | null
 	name: string
-	description: string
+	description: string | null
 	date: bigint
 	blocks: Record<string, string>[]
 	meta: Record<string, string>
@@ -15,10 +15,10 @@ export interface PostModel
 export interface PostModelDetail
 {
 	id: string
-	idProject: string
+	idProject: string | null
 	name: string
 	date: bigint
 	status: PostStatus
 }
 
-type PostStatus = 'ACTIVE' | 'DISABLED' | 'HIDDEN'
+export type PostStatus = 'ACTIVE' | 'DISABLED' | 'HIDDEN'
