@@ -2,11 +2,12 @@
 
 import { ProjectRecordModel } from '@/scripts/modules/database/models/projectModel'
 
-import { ModalLoading, ModalNotification, ModalTextInput, OnModalTextInputResponseEvent } from '@/components'
+import { InputText, ModalBase, ModalLoading, ModalNotification, ModalTextInput } from '@/components'
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Stack, Tooltip, Typography } from '@mui/material'
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Alert, Box, Button, DialogContentText, Stack, Tooltip, Typography } from '@mui/material'
 
 import { postsPageCreateProjectTrigger } from '@/app/(private)/posts/page'
+import { InputSelect } from '@/components/input/inputSelect'
 import { PostControllerCS } from '@/scripts/modules/controller/postController'
 import { PostModelDetail } from '@/scripts/modules/database/models/postModel'
 import { compareObjectsSame } from '@/scripts/utils/comparer'
@@ -20,10 +21,15 @@ interface Props
 
 export function PostsPageCsr({ projectRecords, postDetails }: Props)
 {
-	postsPageCreateProjectTrigger.addSubscription('ProjectPageCsr', () => setNewPostModelOpen(true))
+	postsPageCreateProjectTrigger.addSubscription('ProjectPageCsr', () =>
+	{
+		setNewPostModelOpen(true)
+		setNewPostDetails({ name: '', projectId: selectedProject?.id })
+	})
 
 	const [isWorking, setIsWorking] = useState(false)
 	const [postsList, setPostsList] = useState(postDetails)
+	const [selectedProject, setSelectedProject] = useState<ProjectRecordModel | undefined>(projectRecords[0])
 	const [selectedPost, setSelectedPost] = useState<PostModelDetail | undefined>(postDetails[0])
 	const [newPostModelOpen, setNewPostModelOpen] = useState(false)
 
@@ -32,6 +38,8 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 		message: 'Message',
 		modelOpen: false,
 	})
+
+	const [newPostDetails, setNewPostDetails] = useState({ name: '', projectId: undefined as string | undefined })
 
 	function displayModalNotification(message: string, title?: string)
 	{
@@ -60,17 +68,15 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 	}
 
 	// Need more than name!
-	const postCreateHandler: OnModalTextInputResponseEvent = async (dialogResponse, value) =>
+	async function postCreateHandler()
 	{
 		setNewPostModelOpen(false)
-
-		if (dialogResponse != 'accept' || !value) return
 
 		setIsWorking(true)
 		try
 		{
 			const controller = new PostControllerCS()
-			const response = await controller.create(value, '')
+			const response = await controller.create(newPostDetails.name, newPostDetails.projectId ?? null)
 
 			displayModalNotification('Post has been created.')
 
@@ -147,7 +153,14 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 		<>
 			{/* Posts List */}
 			<Stack spacing={3}>
-				{postsList.map(post =>
+				{postsList.length === 0 && <>
+					<Box mb={3}>
+						<Alert severity="info" variant="outlined">
+							No posts.
+						</Alert>
+					</Box>
+				</>}
+				{postsList.length > 0 && postsList.map(post =>
 					<Accordion key={post.id} expanded={post.id === selectedPost?.id} onChange={(_, v) => postListItemSelectHandler(v ? post.id : undefined)}>
 						<AccordionSummary expandIcon={<ExpandMoreIcon />} >
 							<Typography variant="h6">{post.name}</Typography>
@@ -214,6 +227,37 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 				textType="text"
 				modalOpen={newPostModelOpen}
 				onModalRespond={postCreateHandler}
+			/>
+			<ModalBase
+				header='New Project'
+				modalOpen={newPostModelOpen}
+				size="sm"
+				body={<>
+					<DialogContentText marginBottom={3}>Select a name and project, all other values will bet auto generated.</DialogContentText>
+					<InputSelect
+						label='Project'
+						labelId='new-post-project-select'
+						inputVariant='standard'
+						value={newPostDetails.projectId}
+						onValueChange={
+							(v) => setNewPostDetails({ ...newPostDetails, projectId: v })
+						}
+						options={
+							Object.fromEntries(projectRecords.map(x => [x.id, x.name]))
+						}
+					/>
+					<InputText
+						label='Post Name'
+						inputVariant='standard'
+						value={newPostDetails.name}
+						onValueChange={(v) => setNewPostDetails({ ...newPostDetails, name: v })}
+						sx={{ mt: 2 }}
+					/>
+				</>}
+				footer={<>
+					<Button onClick={() => setNewPostModelOpen(false)}>Cancel</Button>
+					<Button onClick={postCreateHandler} disabled={newPostDetails.name.length === 0}>Submit</Button>
+				</>}
 			/>
 		</>
 	)

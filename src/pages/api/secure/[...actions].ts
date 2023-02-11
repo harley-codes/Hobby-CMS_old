@@ -69,9 +69,9 @@ export default async function handler(
 			if (req.method == 'DELETE')
 			{
 				const data = req.body as ProjectModel
-				const success = await controller.delete(data.id)
+				await controller.delete(data.id)
 
-				const response = ApiResponseBuilder.successGet(success)
+				const response = ApiResponseBuilder.successGet(true)
 				return res.status(response.status).json(JSON.stringify(response))
 			}
 		}
@@ -111,7 +111,7 @@ export default async function handler(
 			if (req.method == 'POST')
 			{
 				const data = req.body as PostModelDetail
-				const project = await controller.create(data.id, data.idProject)
+				const project = await controller.create(data.name, data.idProject)
 
 				const response = ApiResponseBuilder.successGet(project)
 				return res.status(response.status).json(JSON.stringify(response))
@@ -129,9 +129,10 @@ export default async function handler(
 			if (req.method == 'DELETE')
 			{
 				const data = req.body as ProjectModel
-				const success = await controller.delete(data.id)
+				await controller.delete(data.id)
 
-				const response = ApiResponseBuilder.successGet(success)
+				const response = ApiResponseBuilder.successGet(true)
+
 				return res.status(response.status).json(JSON.stringify(response))
 			}
 		}

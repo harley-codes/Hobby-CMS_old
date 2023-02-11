@@ -16,7 +16,7 @@ export default interface DatabaseService
 
 	projectUpdate(id: string, name: string, active: boolean, token: string): Promise<ProjectModel>
 
-	projectDelete(id: string): Promise<boolean>
+	projectDelete(id: string): Promise<void>
 
 	postGetById(postId: string): Promise<PostModel | null>
 
@@ -30,5 +30,5 @@ export default interface DatabaseService
 
 	postDetailUpdate(postId: string, projectId: string | null, name: string, postStatus: PostStatus): Promise<PostModelDetail>
 
-	postDelete(id: string): Promise<boolean>
+	postDelete(id: string): Promise<void>
 }

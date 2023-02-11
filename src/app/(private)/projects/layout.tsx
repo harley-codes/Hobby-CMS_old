@@ -10,7 +10,7 @@ export default function ProjectsLayout({ children }: Children)
 {
 	return (
 		<>
-			<PageHeader headerText='Project'>
+			<PageHeader headerText='Projects'>
 				<Button color="success" variant="contained" onClick={() => projectsPageCreateProjectTrigger.trigger()}>New Project</Button>
 			</PageHeader>
 			<Stack component="main">

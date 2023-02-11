@@ -62,7 +62,7 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 		return result
 	}
 
-	async projectDelete(id: string): Promise<boolean>
+	async projectDelete(id: string): Promise<void>
 	{
 		const dependencies = await this.client.project.count({
 			where: {
@@ -74,14 +74,13 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 			}
 		})
 
-		if (dependencies > 0) return false
+		if (dependencies > 0) throw new Error(`Project has (${dependencies}) post dependencies.`)
 
 		await this.client.project.delete({
 			where: {
 				id: id
 			}
 		})
-		return true
 	}
 
 	async postGetById(postId: string): Promise<PostModel | null>
@@ -99,7 +98,8 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 			blocks: result.blocks?.valueOf() as Record<string, string>[],
 			meta: result.meta?.valueOf() as Record<string, string>,
 			tags: result.blocks?.valueOf() as string[],
-			status: result.status
+			status: result.status,
+			date: Number(result.date)
 		}
 	}
 
@@ -111,6 +111,7 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 			blocks: (x.blocks?.valueOf() ?? []) as Record<string, string>[],
 			meta: (x.meta?.valueOf() ?? {}) as Record<string, string>,
 			tags: (x.tags?.valueOf() ?? {}) as string[],
+			date: Number(x.date)
 		}))
 		return [...resultsMapped]
 	}
@@ -126,7 +127,7 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 				status: true
 			}
 		})
-		return [...result]
+		return [...result.map(x => ({...x, date: Number(x.date)}))]
 	}
 
 	async postCreate(name: string, projectId: string | null): Promise<PostModelDetail>
@@ -143,7 +144,7 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 				status: 'DISABLED'
 			}
 		})
-		return result
+		return {...result, date: Number(result.date)}
 	}
 
 	async postUpdate(postId: string, data: PostUpdateData): Promise<PostModel>
@@ -158,6 +159,7 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 			blocks: (result.blocks?.valueOf() ?? []) as Record<string, string>[],
 			meta: (result.meta?.valueOf() ?? {}) as Record<string, string>,
 			tags: (result.tags?.valueOf() ?? {}) as string[],
+			date: Number(result.date)
 		}
 	}
 
@@ -172,16 +174,15 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 			}
 		})
 
-		return result
+		return {...result, date: Number(result.date)}
 	}
 
-	async postDelete(id: string): Promise<boolean>
+	async postDelete(id: string): Promise<void>
 	{
 		await this.client.post.delete({
 			where: {
 				id: id
 			}
 		})
-		return true
 	}
 }

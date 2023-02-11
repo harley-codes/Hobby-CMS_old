@@ -26,12 +26,17 @@ export class InternalFetchRequester
 				cache: cacheMode
 			})
 
-			const responseData: ApiResponse<TData> = JSON.parse(
-				await requestResponse.json()
-			)
+			const responseUnprocessed = await requestResponse.json()
+
+			const responseData: ApiResponse<TData> = (typeof responseUnprocessed === 'string')
+				? JSON.parse(responseUnprocessed)
+				: responseUnprocessed
 
 			try
 			{
+				if (!requestResponse.ok && !responseData.responseMessage)
+					responseData.responseMessage = requestResponse.statusText
+
 				responseData.status = requestResponse.status
 			}
 			catch { }
@@ -40,6 +45,8 @@ export class InternalFetchRequester
 		}
 		catch (exception: any)
 		{
+			console.log('#', exception)
+
 			if (!exception.response)
 				return ApiResponseBuilder.serverError()
 

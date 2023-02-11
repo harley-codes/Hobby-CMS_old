@@ -4,7 +4,7 @@ import { ProjectModel } from '@/scripts/modules/database/models/projectModel'
 
 import { InputPasswordOutlined, InputSwitch, InputText, ModalLoading, ModalNotification, ModalTextInput, OnModalTextInputResponseEvent } from '@/components'
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Stack, Tooltip, Typography } from '@mui/material'
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Alert, Box, Button, Stack, Tooltip, Typography } from '@mui/material'
 
 import { projectsPageCreateProjectTrigger } from '@/app/(private)/projects/page'
 import { ProjectControllerCS } from '@/scripts/modules/controller/projectController'
@@ -149,7 +149,14 @@ export function ProjectPageCsr({ projects: projectsListProp }: Props)
 		<>
 			{/* Project List */}
 			<Stack spacing={3}>
-				{projectsList.map(project =>
+				{projectsList.length === 0 && <>
+					<Box mb={3}>
+						<Alert severity="info" variant="outlined">
+							No projects.
+						</Alert>
+					</Box>
+				</>}
+				{projectsList.length > 0 && projectsList.map(project =>
 					<Accordion key={project.id} expanded={project.id === selectedProject?.id} onChange={(_, v) => projectsListItemSelectHandler(v ? project.id : undefined)}>
 						<AccordionSummary expandIcon={<ExpandMoreIcon />} >
 							<Typography variant="h6">{project.name}</Typography>

@@ -9,7 +9,7 @@ export interface ProjectControllerInterface
 	getRecordsAll(): Promise<ProjectRecordModel[]>
 	update(id: string, name: string, active: boolean, token: string): Promise<ProjectModel>
 	create(name: string, active: boolean): Promise<ProjectModel>
-	delete(id: string): Promise<boolean>
+	delete(id: string): Promise<void>
 }
 
 export class ProjectControllerCS extends BaseControllerCS implements ProjectControllerInterface
@@ -67,7 +67,7 @@ export class ProjectControllerCS extends BaseControllerCS implements ProjectCont
 		return response.data
 	}
 
-	async delete(id: string): Promise<boolean>
+	async delete(id: string): Promise<void>
 	{
 		const response = await this.api.Request<boolean>({
 			method: 'DELETE',
@@ -76,8 +76,6 @@ export class ProjectControllerCS extends BaseControllerCS implements ProjectCont
 		})
 		if (!response.succeeded || !response.data)
 			throw response.responseMessage
-
-		return response.data
 	}
 }
 
@@ -118,11 +116,10 @@ export class ProjectControllerSS extends BaseControllerSS implements ProjectCont
 		return results
 	}
 
-	async delete(id: string): Promise<boolean>
+	async delete(id: string): Promise<void>
 	{
 		const db = await DatabaseServiceFactory.getDefault()
 		const results = await db.projectDelete(id)
 		await db.dispose()
-		return results
 	}
 }

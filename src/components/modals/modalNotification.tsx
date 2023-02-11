@@ -2,7 +2,7 @@
 
 import { ModalBase } from '@/components/modals/modalBase'
 
-import { Button } from '@mui/material'
+import { Breakpoint, Button } from '@mui/material'
 
 export interface Props
 {
@@ -10,6 +10,7 @@ export interface Props
 	title?: string
 	message: string
 	onModalClose: () => void
+	size?: Breakpoint
 }
 
 export const ModalNotification = (props: Props) =>
@@ -21,6 +22,7 @@ export const ModalNotification = (props: Props) =>
 			footer={
 				<Button onClick={props.onModalClose}>Close</Button>
 			}
+			size={props.size ?? 'xs'}
 		/>
 	)
 }

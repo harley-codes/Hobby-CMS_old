@@ -5,7 +5,7 @@ export interface PostModel
 	idFeaturedImage: string | null
 	name: string
 	description: string | null
-	date: bigint
+	date: number
 	blocks: Record<string, string>[]
 	meta: Record<string, string>
 	tags: string[]
@@ -17,7 +17,7 @@ export interface PostModelDetail
 	id: string
 	idProject: string | null
 	name: string
-	date: bigint
+	date: number
 	status: PostStatus
 }
 

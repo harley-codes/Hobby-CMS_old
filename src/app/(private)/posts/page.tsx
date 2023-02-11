@@ -6,7 +6,7 @@ import { getServerSession } from 'next-auth'
 
 export const postsPageCreateProjectTrigger = createGlobalTrigger().Instance
 
-export default async function ProjectsPage()
+export default async function PostsPage()
 {
 	const session = await getServerSession()
 

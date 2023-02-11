@@ -10,7 +10,7 @@ export interface PostControllerInterface
 	create(name: string, projectId: string | null): Promise<PostModelDetail>
 	update(postId: string, data: PostUpdateData): Promise<PostModel>
 	updateDetail(postId: string, projectId: string | null, name: string, postStatus: PostStatus): Promise<PostModelDetail>
-	delete(id: string): Promise<boolean>
+	delete(id: string): Promise<void>
 }
 
 export class PostControllerCS extends BaseControllerCS implements PostControllerInterface
@@ -81,17 +81,16 @@ export class PostControllerCS extends BaseControllerCS implements PostController
 		return response.data
 	}
 
-	async delete(id: string): Promise<boolean>
+	async delete(id: string): Promise<void>
 	{
 		const response = await this.api.Request<boolean>({
 			method: 'DELETE',
 			action: 'post',
 			data: { id }
 		})
+
 		if (!response.succeeded || !response.data)
 			throw response.responseMessage
-
-		return response.data
 	}
 }
 
@@ -137,11 +136,10 @@ export class PostControllerSS extends BaseControllerCS implements PostController
 		return results
 	}
 
-	async delete(id: string): Promise<boolean>
+	async delete(id: string): Promise<void>
 	{
 		const db = await DatabaseServiceFactory.getDefault()
 		const results = await db.postDelete(id)
 		await db.dispose()
-		return results
 	}
 }
