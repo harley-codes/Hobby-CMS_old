@@ -7,7 +7,7 @@
 		"dev:turbo": "next dev --turbo",
 		"build": "next build",
 		"start": "next start",
-		"postinstall": "npm db:prisma-cockroach:generate",
+		"postinstall": "npm run db:prisma-cockroach:generate",
 		"lint": "next lint",
 		"lint:fix": "next lint --fix",
 		"db:prisma-cockroach:generate": "prisma generate --schema=src/scripts/modules/database/vendors/prisma-cockroach/schema.prisma",
