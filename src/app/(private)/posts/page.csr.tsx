@@ -6,7 +6,7 @@ import { InputText, ModalBase, ModalLoading, ModalNotification, ModalTextInput }
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Alert, Box, Button, DialogContentText, Stack, Tooltip, Typography } from '@mui/material'
 
-import { postsPageCreateProjectTrigger } from '@/app/(private)/posts/page'
+import postsPageCreateProjectTrigger from '@/app/(private)/posts/newPostsTrigger'
 import { InputDate } from '@/components/input/inputDate'
 import { InputSelect } from '@/components/input/inputSelect'
 import { PostControllerCS } from '@/scripts/modules/controller/postController'

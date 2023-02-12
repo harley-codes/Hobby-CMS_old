@@ -1,6 +1,6 @@
 'use client'
 
-import { imagesPageCreateProjectTrigger } from '@/app/(private)/images/page'
+import imagesPageCreateProjectTrigger from '@/app/(private)/images/newImageTrigger'
 import { PageHeader, SkeletonListItems } from '@/components'
 import { Alert, Box, Button } from '@mui/material'
 import { Stack } from '@mui/system'

@@ -6,7 +6,7 @@ import { InputPasswordOutlined, InputSwitch, InputText, ModalLoading, ModalNotif
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Alert, Box, Button, Stack, Tooltip, Typography } from '@mui/material'
 
-import { projectsPageCreateProjectTrigger } from '@/app/(private)/projects/page'
+import projectsPageCreateProjectTrigger from '@/app/(private)/projects/newProjectTrigger'
 import { ProjectControllerCS } from '@/scripts/modules/controller/projectController'
 import { compareObjectsSame } from '@/scripts/utils/comparer'
 import { useState } from 'react'

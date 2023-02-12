@@ -1,10 +1,7 @@
 import { PostsPageCsr } from '@/app/(private)/posts/page.csr'
 import { PostControllerSS } from '@/scripts/modules/controller/postController'
 import { ProjectControllerSS } from '@/scripts/modules/controller/projectController'
-import { createGlobalTrigger } from '@/scripts/utils/createGlobalTrigger'
 import { getServerSession } from 'next-auth'
-
-export const postsPageCreateProjectTrigger = createGlobalTrigger().Instance
 
 export default async function PostsPage()
 {

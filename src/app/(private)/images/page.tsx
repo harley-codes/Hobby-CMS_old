@@ -1,9 +1,6 @@
 import { ImagesPageCsr } from '@/app/(private)/images/page.csr'
 import { ImageControllerSS } from '@/scripts/modules/controller/imageController'
-import { createGlobalTrigger } from '@/scripts/utils/createGlobalTrigger'
 import { getServerSession } from 'next-auth'
-
-export const imagesPageCreateProjectTrigger = createGlobalTrigger().Instance
 
 export default async function ImagesPage()
 {

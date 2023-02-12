@@ -1,6 +1,6 @@
 'use client'
 
-import { postsPageCreateProjectTrigger } from '@/app/(private)/posts/page'
+import postsPageCreateProjectTrigger from '@/app/(private)/posts/newPostsTrigger'
 import { PageHeader, SkeletonListItems } from '@/components'
 import { Box, Button } from '@mui/material'
 import { Stack } from '@mui/system'
