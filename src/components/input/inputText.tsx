@@ -1,6 +1,6 @@
 'use client'
 
-import { SxProps, TextField } from '@mui/material';
+import { SxProps, TextField } from '@mui/material'
 
 type ValueChangeEvent = (value: string) => void;
 

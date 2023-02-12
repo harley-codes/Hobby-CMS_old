@@ -1,8 +1,8 @@
 'use client'
 
-import { Visibility as VisibilityIcon, VisibilityOff as VisibilityOffIcon } from '@mui/icons-material';
-import { FormControl, IconButton, Input, InputAdornment, InputLabel } from '@mui/material';
-import { ChangeEvent, useState } from 'react';
+import { Visibility as VisibilityIcon, VisibilityOff as VisibilityOffIcon } from '@mui/icons-material'
+import { FormControl, IconButton, Input, InputAdornment, InputLabel } from '@mui/material'
+import { ChangeEvent, useState } from 'react'
 
 type PasswordChangeEvent = (value: string) => void;
 

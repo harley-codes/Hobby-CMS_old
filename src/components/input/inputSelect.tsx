@@ -1,7 +1,7 @@
 'use client'
 
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import Enumerable from 'linq';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import Enumerable from 'linq'
 
 type ValueChangeEvent = (value: string) => void;
 

@@ -1,8 +1,8 @@
 'use client'
 
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import { ChangeEvent } from 'react';
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Switch from '@mui/material/Switch'
+import { ChangeEvent } from 'react'
 
 type InputSwitchChangeEvent = (checked: boolean) => void;
 
