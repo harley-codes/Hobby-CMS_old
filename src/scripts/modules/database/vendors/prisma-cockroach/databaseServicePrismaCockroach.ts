@@ -187,6 +187,22 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 		})
 	}
 
+	async imageCount(): Promise<number>
+	{
+		const result = await this.client.image.count()
+		return result
+	}
+
+	async imageGetById(id: string): Promise<ImageModel | null>
+	{
+		const result = await this.client.image.findUnique({
+			where: {
+				id: id
+			}
+		})
+		return result ? {...result, date: Number(result.date)} : null
+	}
+
 	async imageGetPaged(pageIndex: number, pageSize: number, searchFilter?: string): Promise<ImageModel[]>
 	{
 		const result = await this.client.image.findMany({

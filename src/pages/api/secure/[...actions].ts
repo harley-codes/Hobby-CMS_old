@@ -1,5 +1,7 @@
 
+import { ImageControllerSS } from '@/scripts/modules/controller/imageController'
 import { PostControllerSS } from '@/scripts/modules/controller/postController'
+import { ImageCreateData } from '@/scripts/modules/database/databaseService'
 import { PostModel, PostModelDetail } from '@/scripts/modules/database/models/postModel'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ProjectControllerSS } from 'src/scripts/modules/controller/projectController'
@@ -76,6 +78,7 @@ export default async function handler(
 			}
 		}
 
+		// Post
 		if (actions[0] === 'post')
 		{
 			const controller = new PostControllerSS()
@@ -133,6 +136,62 @@ export default async function handler(
 
 				const response = ApiResponseBuilder.successGet(true)
 
+				return res.status(response.status).json(JSON.stringify(response))
+			}
+		}
+
+		// Image
+		if (actions[0] === 'image')
+		{
+			const controller = new ImageControllerSS()
+
+			if (actions[1] === 'paged')
+			{
+				if (req.method == 'GET')
+				{
+					const data = req.body
+					const images = await controller.getPaged(data.pageIndex, data.pageSize, data.searchFilter)
+
+					const response = ApiResponseBuilder.successGet(images)
+					return res.status(response.status).json(JSON.stringify(response))
+				}
+			}
+
+			if (actions[1] === 'count')
+			{
+				if (req.method == 'GET')
+				{
+					const count = await controller.count()
+
+					const response = ApiResponseBuilder.successGet(count)
+					return res.status(response.status).json(JSON.stringify(response))
+				}
+			}
+
+			if (req.method == 'GET')
+			{
+				const data = req.body
+				const image = await controller.get(data.id)
+
+				const response = ApiResponseBuilder.successGet(image)
+				return res.status(response.status).json(JSON.stringify(response))
+			}
+
+			if (req.method == 'POST')
+			{
+				const data = req.body as ImageCreateData
+				const image = await controller.create(data)
+
+				const response = ApiResponseBuilder.successGet(image)
+				return res.status(response.status).json(JSON.stringify(response))
+			}
+
+			if (req.method == 'DELETE')
+			{
+				const data = req.body
+				await controller.delete(data.id)
+
+				const response = ApiResponseBuilder.successGet(true)
 				return res.status(response.status).json(JSON.stringify(response))
 			}
 		}

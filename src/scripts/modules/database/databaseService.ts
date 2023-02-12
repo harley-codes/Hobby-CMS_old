@@ -34,6 +34,10 @@ export default interface DatabaseService
 
 	postDelete(id: string): Promise<void>
 
+	imageCount(): Promise<number>
+
+	imageGetById(id: string): Promise<ImageModel | null>
+
 	imageGetPaged(pageIndex: number, pageSize: number, searchFilter?: string): Promise<ImageModel[]>
 
 	imageCreate(imageData: ImageCreateData): Promise<ImageModel>
