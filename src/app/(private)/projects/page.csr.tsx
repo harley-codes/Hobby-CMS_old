@@ -122,14 +122,7 @@ export function ProjectPageCsr({ projects: projectsListProp }: Props)
 		try
 		{
 			const controller = new ProjectControllerCS()
-			const success = await controller.delete(project.id)
-
-			if (!success)
-			{
-				displayModalNotification('Project cannot be deleted. DB action failed.', 'Error')
-				setIsWorking(false)
-				return
-			}
+			await controller.delete(project.id)
 
 			const index = projectsList.findIndex(x => x.id === project.id)
 			projectsList.splice(index, 1)

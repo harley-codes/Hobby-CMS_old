@@ -3,6 +3,7 @@ namespace NodeJS
 	interface ProcessEnv
 	{
 		NEXT_PUBLIC_SITE_NAME: string
+		NEXT_PUBLIC_DATE_FORMAT: string
 		NEXTAUTH_URL: string
 		NEXTAUTH_SECRET: string
 		NEXTAUTH_PROVIDER_GITHUB_ADMIN_USER_ID: string

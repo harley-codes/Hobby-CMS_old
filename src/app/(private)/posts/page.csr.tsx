@@ -7,10 +7,12 @@ import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Alert, Box, Button, DialogContentText, Stack, Tooltip, Typography } from '@mui/material'
 
 import { postsPageCreateProjectTrigger } from '@/app/(private)/posts/page'
+import { InputDate } from '@/components/input/inputDate'
 import { InputSelect } from '@/components/input/inputSelect'
 import { PostControllerCS } from '@/scripts/modules/controller/postController'
 import { PostModelDetail } from '@/scripts/modules/database/models/postModel'
 import { compareObjectsSame } from '@/scripts/utils/comparer'
+import { PostStatus } from '@prisma/client'
 import { useState } from 'react'
 
 interface Props
@@ -126,14 +128,7 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 		try
 		{
 			const controller = new PostControllerCS()
-			const success = await controller.delete(post.id)
-
-			if (!success)
-			{
-				displayModalNotification('Post cannot be deleted. DB action failed.', 'Error')
-				setIsWorking(false)
-				return
-			}
+			await controller.delete(post.id)
 
 			const index = postsList.findIndex(x => x.id === post.id)
 			postsList.splice(index, 1)
@@ -169,22 +164,48 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 							<>
 								<AccordionDetails>
 									<Stack spacing={4}>
-										Settings
-										{/* <InputSwitch
-											color="success"
-											label={`${selectedPost.active ? 'Is' : 'Not'} Active`}
-											checked={selectedPost.active}
-											onChange={(value) => setSelectedPost({ ...selectedPost, active: value })}
-										/>
 										<InputText
-											label="Project Name"
+											label="Post Name"
 											value={selectedPost.name}
 											onValueChange={(value) => setSelectedPost({ ...selectedPost, name: value })}
+											inputVariant="standard"
 										/>
-										<InputPasswordOutlined
-											label="Access Token"
-											password={selectedPost.token}
-											onPasswordChange={(value) => setSelectedPost({ ...selectedPost, token: value })} /> */}
+										<InputSelect
+											label='Project'
+											labelId='edit-post-project'
+											inputVariant='standard'
+											value={selectedPost.idProject ?? undefined}
+											onValueChange={
+												(v) => setSelectedPost({ ...selectedPost, idProject: v })
+											}
+											options={
+												Object.fromEntries(projectRecords.map(x => [x.id, x.name]))
+											}
+										/>
+										<Stack spacing={4} direction="row">
+											<InputSelect
+												label='Status'
+												labelId='edit-post-status'
+												inputVariant='standard'
+												value={selectedPost.status}
+												onValueChange={
+													(v) => setSelectedPost({ ...selectedPost, status: v as PostStatus })
+												}
+												options={[
+													PostStatus.ACTIVE,
+													PostStatus.DISABLED,
+													PostStatus.HIDDEN,
+												]}
+											/>
+											<InputDate
+												label='Publish Date'
+												value={selectedPost.date}
+												inputVariant='standard'
+												onValueChange={
+													(v) => setSelectedPost({ ...selectedPost, date: v })
+												}
+											/>
+										</Stack>
 									</Stack>
 								</AccordionDetails>
 
