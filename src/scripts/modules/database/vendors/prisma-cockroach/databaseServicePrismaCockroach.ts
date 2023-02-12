@@ -1,6 +1,7 @@
+import { ImageModel } from '@/scripts/modules/database/models/imageModel'
 import { PrismaClient } from '@prisma/client'
 import getUnixTime from 'date-fns/getUnixTime'
-import DatabaseService, { PostUpdateData } from 'src/scripts/modules/database/databaseService'
+import DatabaseService, { ImageCreateData, PostUpdateData } from 'src/scripts/modules/database/databaseService'
 import { PostModel, PostModelDetail, PostStatus } from 'src/scripts/modules/database/models/postModel'
 import { ProjectModel, ProjectRecordModel } from 'src/scripts/modules/database/models/projectModel'
 
@@ -180,6 +181,39 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 	async postDelete(id: string): Promise<void>
 	{
 		await this.client.post.delete({
+			where: {
+				id: id
+			}
+		})
+	}
+
+	async imageGetPaged(pageIndex: number, pageSize: number, searchFilter?: string): Promise<ImageModel[]>
+	{
+		const result = await this.client.image.findMany({
+			skip: pageIndex * pageSize,
+			take: pageSize,
+			where: typeof searchFilter === 'undefined' ? undefined : {
+				name: { contains: searchFilter}
+			},
+			orderBy: {
+				date: 'desc'
+			}
+		})
+
+		return result.map(x => ({...x, date: Number(x.date)}))
+	}
+
+	async imageCreate(imageData: ImageCreateData): Promise<ImageModel>
+	{
+		const result = await this.client.image.create({
+			data: {...imageData}
+		})
+		return {...result, date: Number(result.date)}
+	}
+
+	async imageDelete(id: string): Promise<void>
+	{
+		await this.client.image.delete({
 			where: {
 				id: id
 			}

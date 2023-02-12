@@ -1,7 +1,9 @@
+import { ImageModel } from '@/scripts/modules/database/models/imageModel'
 import { PostModel, PostModelDetail, PostStatus } from 'src/scripts/modules/database/models/postModel'
 import { ProjectModel, ProjectRecordModel } from 'src/scripts/modules/database/models/projectModel'
 
 export type PostUpdateData = Partial<Omit<PostModel, 'id'>>
+export type ImageCreateData = Omit<ImageModel, 'id'>
 
 export default interface DatabaseService
 {
@@ -31,4 +33,10 @@ export default interface DatabaseService
 	postDetailUpdate(postId: string, projectId: string | null, name: string, postStatus: PostStatus): Promise<PostModelDetail>
 
 	postDelete(id: string): Promise<void>
+
+	imageGetPaged(pageIndex: number, pageSize: number, searchFilter?: string): Promise<ImageModel[]>
+
+	imageCreate(imageData: ImageCreateData): Promise<ImageModel>
+
+	imageDelete(id: string): Promise<void>
 }
