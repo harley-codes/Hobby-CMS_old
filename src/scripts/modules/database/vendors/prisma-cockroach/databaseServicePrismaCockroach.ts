@@ -229,6 +229,18 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 
 	async imageDelete(id: string): Promise<void>
 	{
+		const dependencies = await this.client.image.count({
+			where: {
+				posts: {
+					some: {
+						idFeaturedImage: id
+					}
+				}
+			}
+		})
+
+		if (dependencies > 0) throw new Error(`Image has (${dependencies}) post feature image dependencies.`)
+
 		await this.client.image.delete({
 			where: {
 				id: id
