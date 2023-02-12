@@ -4,8 +4,7 @@ import { SxProps, TextField } from '@mui/material'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import fromUnixTime from 'date-fns/fromUnixTime'
-import getUnixTime from 'date-fns/getUnixTime'
+import { fromUnixTime, getUnixTime } from 'date-fns'
 
 type ValueChangeEvent = (value: number) => void;
 
@@ -41,15 +40,3 @@ export function InputDate(props: Props)
 		</LocalizationProvider>
 	)
 }
-
-// 	<TextField
-
-// 		label={props.label}
-// 		variant={props.inputVariant}
-// 		value={props.value}
-// 		onChange={(event) => props.onValueChange(event.target.value)}
-// 		sx={{ mt: 1, ...props.sx }}
-// 		fullWidth={props.fullWidth != false}
-// 		color={props.color}
-// 	/>
-// )
