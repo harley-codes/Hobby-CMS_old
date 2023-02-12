@@ -40,7 +40,9 @@ enum PostStatus {
 
 model Image {
     id      String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    name    String @db.String()
     dataUrl String @db.String()
+    date    BigInt @db.Int8
     // Relational
     posts   Post[]
 }
