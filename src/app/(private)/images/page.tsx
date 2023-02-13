@@ -9,6 +9,7 @@ export default async function ImagesPage()
 	if (!session) return <ImagesPageCsr count={0} pageSize={0} images={[]} />
 
 	const pageSize = 5
+
 	const controller = new ImageControllerSS()
 
 	const [count, images] = await Promise.all([controller.count(), controller.getPaged(0, pageSize)])
