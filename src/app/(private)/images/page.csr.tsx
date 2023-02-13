@@ -5,7 +5,8 @@ import { InputText, ModalBase, ModalLoading, ModalNotification } from '@/compone
 import { ImageControllerCS } from '@/scripts/modules/controller/imageController'
 import { ImageModel } from '@/scripts/modules/database/models/imageModel'
 
-import { Box, Button, Stack, Typography } from '@mui/material'
+import { Box, Button, ImageList, ImageListItem, Stack, Typography, useMediaQuery } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 import { getUnixTime } from 'date-fns'
 import { ChangeEvent, useRef, useState } from 'react'
 
@@ -19,9 +20,16 @@ interface Props
 
 export function ImagesPageCsr({ count, pageSize, images }: Props)
 {
+	const theme = useTheme()
+	const isMobileMode = useMediaQuery(theme.breakpoints.down('md'))
+	const isTabletMode = useMediaQuery(theme.breakpoints.down('lg'))
+	const imageTableCols = isMobileMode ? 2 : isTabletMode ? 4 : 6
+
 	const [isWorking, setIsWorking] = useState(false)
 
 	const [imageList, setImageList] = useState(images)
+
+	const [selectedImage, setSelectedImage] = useState<ImageModel>()
 
 	const [newImageModelOpen, setNewImageModelOpen] = useState(false)
 
@@ -71,11 +79,16 @@ export function ImagesPageCsr({ count, pageSize, images }: Props)
 
 		event.target.value = ''
 
-		setNewImageProps({
-			name: file.name,
-			dataUrl: URL.createObjectURL(file)
-		})
-		setNewImageModelOpen(true)
+		const reader = new FileReader()
+		reader.onload = (e) =>
+		{
+			setNewImageProps({
+				name: file.name,
+				dataUrl: reader.result as string
+			})
+			setNewImageModelOpen(true)
+		}
+		reader.readAsDataURL(file)
 	}
 
 	async function imageCreateHandler()
@@ -103,6 +116,31 @@ export function ImagesPageCsr({ count, pageSize, images }: Props)
 		setIsWorking(false)
 	}
 
+	async function imageDeleteHandler()
+	{
+		if (!selectedImage) return
+
+		setIsWorking(true)
+
+		try
+		{
+			const controller = new ImageControllerCS()
+			await controller.delete(selectedImage.id)
+
+			const index = imageList.findIndex(x => x.id === selectedImage.id)
+			imageList.splice(index, 1)
+			setImageList([...imageList])
+			setSelectedImage(undefined)
+
+			displayModalNotification('Image has been deleted.')
+		}
+		catch (error: any)
+		{
+			displayModalNotification(error, 'Error')
+		}
+		setIsWorking(false)
+	}
+
 	return (
 		<>
 			{/* Project List */}
@@ -110,6 +148,21 @@ export function ImagesPageCsr({ count, pageSize, images }: Props)
 				<Typography>Count: {count}</Typography>
 				<Typography>Page Size: {pageSize}</Typography>
 				<Typography>Images Length: {imageList.length}</Typography>
+				<ImageList cols={imageTableCols} gap={5}>
+					{imageList.map((image) =>
+						<ImageListItem key={image.id} sx={{ cursor: 'pointer' }}>
+							{/* eslint-disable-next-line @next/next/no-img-element */}
+							<img
+								src={image.dataUrl}
+								alt='error'
+								style={{ width: '100%', objectFit: 'contain' }}
+								title={image.name}
+								loading='lazy'
+								onClick={() => setSelectedImage(image)}
+							/>
+						</ImageListItem>
+					)}
+				</ImageList>
 			</Stack>
 			{/* Overlays */}
 			<input ref={uploadInputRef} type="file" accept='image/*' style={{ display: 'none' }} onChange={newImageSelectHandler} />
@@ -144,6 +197,27 @@ export function ImagesPageCsr({ count, pageSize, images }: Props)
 				footer={<>
 					<Button onClick={() => setNewImageModelOpen(false)}>Cancel</Button>
 					<Button onClick={imageCreateHandler} disabled={newImageProps.name.length === 0}>Submit</Button>
+				</>}
+			/>
+			<ModalBase
+				header={selectedImage?.name}
+				modalOpen={selectedImage ? true : false}
+				size="sm"
+				body={selectedImage && <>
+					<Typography variant="caption">ID: {selectedImage.id}</Typography>
+					<Box sx={{ aspectRatio: '16 / 9' }} mt={1}>
+						{/* eslint-disable-next-line @next/next/no-img-element */}
+						<img
+							src={selectedImage.dataUrl}
+							alt='error'
+							style={{ width: '100%', objectFit: 'contain' }}
+							title={selectedImage.dataUrl}
+						/>
+					</Box>
+				</>}
+				footer={<>
+					<Button onClick={() => setSelectedImage(undefined)}>Cancel</Button>
+					<Button onDoubleClick={imageDeleteHandler} color="error">Delete</Button>
 				</>}
 			/>
 		</>
