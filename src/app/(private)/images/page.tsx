@@ -6,13 +6,7 @@ export default async function ImagesPage()
 {
 	const session = await getServerSession()
 
-	if (!session) return <ImagesPageCsr count={0} pageSize={0} images={[]} />
+	const data = session ? await new ImageControllerSS().getDetailsAll() : []
 
-	const pageSize = 5
-
-	const controller = new ImageControllerSS()
-
-	const [count, images] = await Promise.all([controller.count(), controller.getPaged(0, pageSize)])
-
-	return <ImagesPageCsr count={count} pageSize={pageSize} images={images} />
+	return <ImagesPageCsr imageDetails={data} />
 }

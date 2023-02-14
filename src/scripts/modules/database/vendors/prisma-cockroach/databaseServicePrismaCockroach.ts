@@ -1,4 +1,4 @@
-import { ImageModel } from '@/scripts/modules/database/models/imageModel'
+import { ImageDetailModel, ImageModel } from '@/scripts/modules/database/models/imageModel'
 import { PrismaClient } from '@prisma/client'
 import getUnixTime from 'date-fns/getUnixTime'
 import DatabaseService, { ImageCreateData, PostUpdateData } from 'src/scripts/modules/database/databaseService'
@@ -187,13 +187,7 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 		})
 	}
 
-	async imageCount(): Promise<number>
-	{
-		const result = await this.client.image.count()
-		return result
-	}
-
-	async imageGetById(id: string): Promise<ImageModel | null>
+	async imageGet(id: string): Promise<ImageModel | null>
 	{
 		const result = await this.client.image.findUnique({
 			where: {
@@ -203,20 +197,26 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 		return result ? {...result, date: Number(result.date)} : null
 	}
 
-	async imageGetPaged(pageIndex: number, pageSize: number, searchFilter?: string): Promise<ImageModel[]>
+	async imageGetDetailsAll(): Promise<ImageDetailModel[]>
 	{
 		const result = await this.client.image.findMany({
-			skip: pageIndex * pageSize,
-			take: pageSize,
-			where: typeof searchFilter === 'undefined' ? undefined : {
-				name: { contains: searchFilter}
-			},
-			orderBy: {
-				date: 'desc'
+			select: {
+				id: true,
+				name: true,
+				date: true
 			}
 		})
+		return [...result.map(x => ({...x, date: Number(x.date)}))]
+	}
 
-		return result.map(x => ({...x, date: Number(x.date)}))
+	async imageGetMany(ids: string[]): Promise<ImageModel[]>
+	{
+		const result = await this.client.image.findMany({
+			where:{
+				id: { in: ids }
+			}
+		})
+		return [...result.map(x => ({...x, date: Number(x.date)}))]
 	}
 
 	async imageCreate(imageData: ImageCreateData): Promise<ImageModel>

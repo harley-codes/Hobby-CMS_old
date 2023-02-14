@@ -1,4 +1,4 @@
-import { ImageModel } from '@/scripts/modules/database/models/imageModel'
+import { ImageDetailModel, ImageModel } from '@/scripts/modules/database/models/imageModel'
 import { PostModel, PostModelDetail, PostStatus } from 'src/scripts/modules/database/models/postModel'
 import { ProjectModel, ProjectRecordModel } from 'src/scripts/modules/database/models/projectModel'
 
@@ -34,11 +34,11 @@ export default interface DatabaseService
 
 	postDelete(id: string): Promise<void>
 
-	imageCount(): Promise<number>
+	imageGetDetailsAll(): Promise<ImageDetailModel[]>
 
-	imageGetById(id: string): Promise<ImageModel | null>
+	imageGetMany(ids: string[]): Promise<ImageModel[]>
 
-	imageGetPaged(pageIndex: number, pageSize: number, searchFilter?: string): Promise<ImageModel[]>
+	imageGet(id: string): Promise<ImageModel | null>
 
 	imageCreate(imageData: ImageCreateData): Promise<ImageModel>
 

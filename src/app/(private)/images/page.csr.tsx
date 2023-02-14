@@ -1,42 +1,97 @@
 'use client'
 
+import { addImagesToStorage, addImageToStorage, getImagesFromStorage, removeImagesFromStorage } from '@/app/(private)/images/localStorage'
 import imagesPageCreateProjectTrigger from '@/app/(private)/images/newImageTrigger'
 import { InputText, ModalBase, ModalLoading, ModalNotification } from '@/components'
 import { ImageControllerCS } from '@/scripts/modules/controller/imageController'
-import { ImageModel } from '@/scripts/modules/database/models/imageModel'
-
-import { Box, Button, ImageList, ImageListItem, Stack, Typography, useMediaQuery } from '@mui/material'
+import { ImageDetailModel } from '@/scripts/modules/database/models/imageModel'
+import { Box, Button, ImageList, ImageListItem, Skeleton, Stack, Typography, useMediaQuery } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { getUnixTime } from 'date-fns'
-import { ChangeEvent, useRef, useState } from 'react'
+import Enumerable from 'linq'
 
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 
 interface Props
 {
-	count: number
-	pageSize: number
-	images: ImageModel[]
+	imageDetails: ImageDetailModel[]
 }
 
-export function ImagesPageCsr({ count, pageSize, images }: Props)
+export function ImagesPageCsr(props: Props)
 {
+
+
+	const [isWorking, setIsWorking] = useState(false)
 	const theme = useTheme()
 	const isMobileMode = useMediaQuery(theme.breakpoints.down('md'))
 	const isTabletMode = useMediaQuery(theme.breakpoints.down('lg'))
 	const imageTableCols = isMobileMode ? 2 : isTabletMode ? 4 : 6
+	const pageSize = imageTableCols
+	const [paginationIndexCurrent, setPaginationIndexCurrent] = useState(0)
+	const [imageDetails, setImageDetails] = useState(props.imageDetails)
+	const [imageDetailsFiltered, setImageDetailsFiltered] = useState<ImageDetailModel[]>([])
+	const [imageDataUrls, setImageDataUrls] = useState<Record<string, string>>({})
 
-	const [isWorking, setIsWorking] = useState(false)
-
-	const [imageList, setImageList] = useState(images)
-
-	const [selectedImage, setSelectedImage] = useState<ImageModel>()
-
+	const [selectedImage, setSelectedImage] = useState<ImageDetailModel>()
 	const [newImageModelOpen, setNewImageModelOpen] = useState(false)
-
 	const [newImageProps, setNewImageProps] = useState({
 		name: '',
 		dataUrl: '',
 	})
+
+	// Cleanup Local Storage
+	useEffect(() =>
+	{
+		const lsImages = getImagesFromStorage()
+		const lsImageKeys = Object.keys(lsImages)
+
+		const propImageDetails = Enumerable.from(imageDetails)
+		const propImageDetailKeys = propImageDetails.select(x => x.id)
+
+		// To Remove
+		const toRemove = Enumerable.from(lsImageKeys).where(x => !propImageDetailKeys.contains(x))
+		if (toRemove.any())
+		{
+			toRemove.forEach(key => delete lsImages[key])
+			removeImagesFromStorage(toRemove.toArray())
+		}
+
+		// Set Filtered
+		{
+			const pageIndex = paginationIndexCurrent + 1
+			const filtered = Enumerable.from(imageDetails).orderBy(x => x.date).take(pageIndex * pageSize).toArray()
+			setImageDetailsFiltered(filtered)
+			setPaginationIndexCurrent(pageIndex)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [imageDetails])
+
+	// Grab Image Data
+	useEffect(() =>
+	{
+		setIsWorking(true)
+		const lsImages = getImagesFromStorage()
+		const lsImageKeys = Enumerable.from(Object.keys(lsImages))
+
+		const toAdd = Enumerable.from(imageDetailsFiltered).where(x => !lsImageKeys.contains(x.id))
+
+		async function get()
+		{
+			const data = await new ImageControllerCS().getMany(toAdd.select(x => x.id).toArray())
+			data.forEach(x => lsImages[x.id] = x.dataUrl)
+			addImagesToStorage(data.map(x => ({ id: x.id, dataUrl: x.dataUrl })))
+			setIsWorking(false)
+		}
+
+		function end()
+		{
+			setImageDataUrls(lsImages)
+			setIsWorking(false)
+		}
+
+		toAdd.any() && get().finally(() => end()) || end()
+	}, [imageDetailsFiltered])
+
 
 	const [modalNotificationProps, setModalNotificationProps] = useState({
 		title: 'Title' as undefined | string,
@@ -60,9 +115,17 @@ export function ImagesPageCsr({ count, pageSize, images }: Props)
 		})
 	}
 
+	function loadMoreHandler()
+	{
+		const pageIndex = paginationIndexCurrent + 1
+		const filtered = Enumerable.from(imageDetails).orderBy(x => x.date).take(pageIndex * pageSize).toArray()
+
+		setPaginationIndexCurrent(pageIndex)
+		setImageDetailsFiltered(filtered)
+	}
+
 	function newImageSelectHandler(event: ChangeEvent<HTMLInputElement>)
 	{
-
 		if (!event.target.files) return
 
 		const file = event.target.files.item(0)
@@ -80,7 +143,7 @@ export function ImagesPageCsr({ count, pageSize, images }: Props)
 		event.target.value = ''
 
 		const reader = new FileReader()
-		reader.onload = (e) =>
+		reader.onload = () =>
 		{
 			setNewImageProps({
 				name: file.name,
@@ -106,8 +169,8 @@ export function ImagesPageCsr({ count, pageSize, images }: Props)
 			})
 
 			displayModalNotification('Image has been created.')
-
-			setImageList([...imageList, response])
+			addImageToStorage(response.id, response.dataUrl)
+			setImageDetails([...imageDetails, { ...response }])
 		}
 		catch (error: any)
 		{
@@ -127,9 +190,9 @@ export function ImagesPageCsr({ count, pageSize, images }: Props)
 			const controller = new ImageControllerCS()
 			await controller.delete(selectedImage.id)
 
-			const index = imageList.findIndex(x => x.id === selectedImage.id)
-			imageList.splice(index, 1)
-			setImageList([...imageList])
+			const index = imageDetails.findIndex(x => x.id === selectedImage.id)
+			imageDetails.splice(index, 1)
+			setImageDetails([...imageDetails])
 			setSelectedImage(undefined)
 
 			displayModalNotification('Image has been deleted.')
@@ -143,25 +206,31 @@ export function ImagesPageCsr({ count, pageSize, images }: Props)
 
 	return (
 		<>
-			{/* Project List */}
 			<Stack spacing={3}>
-				<Typography>Count: {count}</Typography>
-				<Typography>Page Size: {pageSize}</Typography>
-				<Typography>Images Length: {imageList.length}</Typography>
 				<ImageList cols={imageTableCols} gap={5}>
-					{imageList.map((image) =>
-						<ImageListItem key={image.id} sx={{ cursor: 'pointer' }}>
-							{/* eslint-disable-next-line @next/next/no-img-element */}
-							<img
-								src={image.dataUrl}
-								alt='error'
-								style={{ width: '100%', objectFit: 'contain' }}
-								title={image.name}
-								loading='lazy'
-								onClick={() => setSelectedImage(image)}
-							/>
+					{imageDetailsFiltered.map((imageDetail) =>
+						<ImageListItem key={imageDetail.id} sx={{ cursor: 'pointer' }}>
+							{imageDataUrls[imageDetail.id]
+								? (
+									// eslint-disable-next-line @next/next/no-img-element
+									<img
+										src={imageDataUrls[imageDetail.id]}
+										alt='error'
+										style={{ width: '100%', objectFit: 'contain' }}
+										title={imageDetail.name}
+										loading='lazy'
+										onClick={() => setSelectedImage(imageDetail)}
+									/>
+								)
+								: (
+									<Skeleton variant="rectangular" />
+								)
+							}
 						</ImageListItem>
 					)}
+					{imageDetailsFiltered.length < imageDetails.length && <>
+						<Button variant='contained' onClick={loadMoreHandler}>More</Button>
+					</>}
 				</ImageList>
 			</Stack>
 			{/* Overlays */}
@@ -206,13 +275,21 @@ export function ImagesPageCsr({ count, pageSize, images }: Props)
 				body={selectedImage && <>
 					<Typography variant="caption">ID: {selectedImage.id}</Typography>
 					<Box sx={{ aspectRatio: '16 / 9' }} mt={1}>
-						{/* eslint-disable-next-line @next/next/no-img-element */}
-						<img
-							src={selectedImage.dataUrl}
-							alt='error'
-							style={{ width: '100%', objectFit: 'contain' }}
-							title={selectedImage.dataUrl}
-						/>
+						{imageDataUrls[selectedImage.id]
+							? (
+								// eslint-disable-next-line @next/next/no-img-element
+								<img
+									src={imageDataUrls[selectedImage.id]}
+									alt='error'
+									style={{ width: '100%', objectFit: 'contain' }}
+									title={selectedImage.name}
+									loading='lazy'
+								/>
+							)
+							: (
+								<Skeleton variant="rectangular" />
+							)
+						}
 					</Box>
 				</>}
 				footer={<>
@@ -221,6 +298,5 @@ export function ImagesPageCsr({ count, pageSize, images }: Props)
 				</>}
 			/>
 		</>
-
 	)
 }

@@ -145,25 +145,25 @@ export default async function handler(
 		{
 			const controller = new ImageControllerSS()
 
-			if (actions[1] === 'paged')
+			if (actions[1] === 'many')
 			{
-				if (req.method == 'GET')
+				if (req.method == 'POST')
 				{
 					const data = req.body
-					const images = await controller.getPaged(data.pageIndex, data.pageSize, data.searchFilter)
+					const images = await controller.getMany(data.ids)
 
 					const response = ApiResponseBuilder.successGet(images)
 					return res.status(response.status).json(JSON.stringify(response))
 				}
 			}
 
-			if (actions[1] === 'count')
+			if (actions[1] === 'detail')
 			{
 				if (req.method == 'GET')
 				{
-					const count = await controller.count()
+					const images = await controller.getDetailsAll()
 
-					const response = ApiResponseBuilder.successGet(count)
+					const response = ApiResponseBuilder.successGet(images)
 					return res.status(response.status).json(JSON.stringify(response))
 				}
 			}

@@ -5,3 +5,5 @@ export interface ImageModel
 	dataUrl: string
 	date: number
 }
+
+export type ImageDetailModel = Omit<ImageModel, 'dataUrl'>

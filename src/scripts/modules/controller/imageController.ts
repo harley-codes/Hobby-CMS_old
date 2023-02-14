@@ -1,15 +1,15 @@
 import { ImageCreateData } from '@/scripts/modules/database/databaseService'
-import { ImageModel } from '@/scripts/modules/database/models/imageModel'
+import { ImageDetailModel, ImageModel } from '@/scripts/modules/database/models/imageModel'
 import { BaseControllerCS } from 'src/scripts/modules/controller/base/baseControllerCS'
 import { DatabaseServiceFactory } from 'src/scripts/modules/database/databaseServiceFactory'
 
 export interface ImageControllerInterface
 {
-	count(): Promise<number>
-
 	get(id: string): Promise<ImageModel | null>
 
-	getPaged(pageIndex: number, pageSize: number, searchFilter?: string): Promise<ImageModel[]>
+	getMany(ids: string[]): Promise<ImageModel[]>
+
+	getDetailsAll(): Promise<ImageDetailModel[]>
 
 	create(imageData: ImageCreateData): Promise<ImageModel>
 
@@ -18,19 +18,6 @@ export interface ImageControllerInterface
 
 export class ImageControllerCS extends BaseControllerCS implements ImageControllerInterface
 {
-	async count(): Promise<number>
-	{
-		const response = await this.api.Request<number>({
-			method: 'GET',
-			action: 'image/count',
-		})
-
-		if (!response.succeeded || !response.data)
-			throw response.responseMessage
-
-		return response.data
-	}
-
 	async get(id: string): Promise<ImageModel | null>
 	{
 		const response = await this.api.Request<ImageModel | null>({
@@ -45,13 +32,27 @@ export class ImageControllerCS extends BaseControllerCS implements ImageControll
 		return response.data
 	}
 
-	async getPaged(pageIndex: number, pageSize: number, searchFilter?: string | undefined): Promise<ImageModel[]>
+	async getMany(ids: string[]): Promise<ImageModel[]>
 	{
 		const response = await this.api.Request<ImageModel[]>({
-			method: 'GET',
-			action: 'image/paged',
-			data: {pageIndex, pageSize, searchFilter}
+			method: 'POST',
+			action: 'image/many',
+			data: { ids }
 		})
+
+		if (!response.succeeded || !response.data)
+			throw response.responseMessage
+
+		return response.data
+	}
+
+	async getDetailsAll(): Promise<ImageDetailModel[]>
+	{
+		const response = await this.api.Request<ImageDetailModel[]>({
+			method: 'GET',
+			action: 'image/detail'
+		})
+
 		if (!response.succeeded || !response.data)
 			throw response.responseMessage
 
@@ -87,26 +88,26 @@ export class ImageControllerCS extends BaseControllerCS implements ImageControll
 
 export class ImageControllerSS extends BaseControllerCS implements ImageControllerInterface
 {
-	async count(): Promise<number>
-	{
-		const db = await DatabaseServiceFactory.getDefault()
-		const results = await db.imageCount()
-		await db.dispose()
-		return results
-	}
-
 	async get(id: string): Promise<ImageModel | null>
 	{
 		const db = await DatabaseServiceFactory.getDefault()
-		const results = await db.imageGetById(id)
+		const results = await db.imageGet(id)
 		await db.dispose()
 		return results
 	}
 
-	async getPaged(pageIndex: number, pageSize: number, searchFilter?: string | undefined): Promise<ImageModel[]>
+	async getMany(ids: string[]): Promise<ImageModel[]>
 	{
 		const db = await DatabaseServiceFactory.getDefault()
-		const results = await db.imageGetPaged(pageIndex, pageSize, searchFilter)
+		const results = await db.imageGetMany(ids)
+		await db.dispose()
+		return results
+	}
+
+	async getDetailsAll(): Promise<ImageDetailModel[]>
+	{
+		const db = await DatabaseServiceFactory.getDefault()
+		const results = await db.imageGetDetailsAll()
 		await db.dispose()
 		return results
 	}
