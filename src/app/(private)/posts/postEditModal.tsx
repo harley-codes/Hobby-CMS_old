@@ -77,7 +77,7 @@ export function PostBlocksEditModal(props: Props)
 						{Object.entries(blocks).map(([blockId, blockData], index) =>
 							<Card key={blockId} variant="outlined">
 								<CardContent>
-									{process.env.NEXT_PUBLIC_SHOW_DEBUG_IDS &&
+									{process.env.NEXT_PUBLIC_DEBUG_SHOW_IDS &&
 										<Typography variant='caption'>ID: {blockId}</Typography>
 									}
 									<PostBlockDynamicEdit
