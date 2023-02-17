@@ -7,10 +7,11 @@ import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Alert, Box, Button, DialogContentText, Stack, Tooltip, Typography } from '@mui/material'
 
 import postsPageCreateProjectTrigger from '@/app/(private)/posts/newPostsTrigger'
+import { PostBlocksEditModal } from '@/app/(private)/posts/postEditModal'
 import { InputDate } from '@/components/input/inputDate'
 import { InputSelect } from '@/components/input/inputSelect'
 import { PostControllerCS } from '@/scripts/modules/controller/postController'
-import { PostModelDetail } from '@/scripts/modules/database/models/postModel'
+import { PostBlocks, PostModelDetail } from '@/scripts/modules/database/models/postModel'
 import { compareObjectsSame } from '@/scripts/utils/comparer'
 import { PostStatus } from '@prisma/client'
 import { useState } from 'react'
@@ -33,6 +34,7 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 	const [postsList, setPostsList] = useState(postDetails)
 	const [selectedProject, setSelectedProject] = useState<ProjectRecordModel | undefined>(projectRecords[0])
 	const [selectedPost, setSelectedPost] = useState<PostModelDetail | undefined>(postDetails[0])
+	const [selectedPostBlocks, setSelectedPostBlocks] = useState<PostBlocks | undefined>()
 	const [newPostModelOpen, setNewPostModelOpen] = useState(false)
 
 	const [modalNotificationProps, setModalNotificationProps] = useState({
@@ -211,6 +213,7 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 
 								<AccordionActions>
 									<Stack direction="row" gap={2} paddingRight={1} paddingBottom={1}>
+										<Button color='success' variant="contained" onClick={() => setSelectedPostBlocks({})}>Edit Content</Button>
 										<Tooltip title="Double Click to Delete" arrow>
 											<Button
 												color="warning"
@@ -240,6 +243,11 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 				message={modalNotificationProps.message}
 				modelOpen={modalNotificationProps.modelOpen}
 				onModalClose={() => setModalNotificationProps({ ...modalNotificationProps, modelOpen: false })}
+			/>
+			<PostBlocksEditModal
+				postBlocks={selectedPostBlocks}
+				onRequestSave={() => setSelectedPostBlocks(undefined)}
+				onRequestCancel={() => setSelectedPostBlocks(undefined)}
 			/>
 			<ModalTextInput
 				title="New Post"

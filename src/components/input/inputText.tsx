@@ -23,7 +23,7 @@ export function InputText(props: Props)
 			variant={props.inputVariant}
 			value={props.value}
 			onChange={(event) => props.onValueChange(event.target.value)}
-			sx={{ mt: 1, ...props.sx }}
+			sx={props.sx}
 			fullWidth={props.fullWidth != false}
 			color={props.color}
 		/>

@@ -6,11 +6,13 @@ export interface PostModel
 	name: string
 	description: string | null
 	date: number
-	blocks: Record<string, string>[]
+	blocks: PostBlocks
 	meta: Record<string, string>
 	tags: string[]
 	status: PostStatus
 }
+
+export type PostBlocks = Record<string, Record<string, string>>
 
 export interface PostModelDetail
 {
