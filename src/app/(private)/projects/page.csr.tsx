@@ -6,10 +6,10 @@ import { InputPasswordOutlined, InputSwitch, InputText, ModalLoading, ModalNotif
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Alert, Box, Button, Stack, Tooltip, Typography } from '@mui/material'
 
-import projectsPageCreateProjectTrigger from '@/app/(private)/projects/newProjectTrigger'
+import { addNewProjectCallback } from '@/app/(private)/projects/newProjectTrigger'
 import { ProjectControllerCS } from '@/scripts/modules/controller/projectController'
 import { compareObjectsSame } from '@/scripts/utils/comparer'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface Props
 {
@@ -18,8 +18,6 @@ interface Props
 
 export function ProjectPageCsr({ projects: projectsListProp }: Props)
 {
-	projectsPageCreateProjectTrigger.addSubscription('ProjectPageCsr', () => setNewProjectModelOpen(true))
-
 	const [isWorking, setIsWorking] = useState(false)
 	const [projectsList, setProjectsList] = useState(projectsListProp)
 	const [selectedProject, setSelectedProject] = useState<ProjectModel | undefined>(projectsList[0])
@@ -30,6 +28,8 @@ export function ProjectPageCsr({ projects: projectsListProp }: Props)
 		message: 'Message',
 		modelOpen: false,
 	})
+
+	useEffect(() => addNewProjectCallback('ProjectPageCsr', () => setNewProjectModelOpen(true)), [])
 
 	function displayModalNotification(message: string, title?: string)
 	{

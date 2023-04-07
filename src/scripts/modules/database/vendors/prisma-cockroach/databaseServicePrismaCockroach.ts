@@ -96,7 +96,7 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 
 		return {
 			...result,
-			blocks: result.blocks?.valueOf() as Record<string, string>[],
+			blocks: result.blocks?.valueOf() as Record<string, Record<string, string>>,
 			meta: result.meta?.valueOf() as Record<string, string>,
 			tags: result.blocks?.valueOf() as string[],
 			status: result.status,
@@ -109,7 +109,7 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 		const result = await this.client.post.findMany()
 		const resultsMapped = result.map(x => ({
 			...x,
-			blocks: (x.blocks?.valueOf() ?? []) as Record<string, string>[],
+			blocks: (x.blocks?.valueOf() ?? []) as Record<string, Record<string, string>>,
 			meta: (x.meta?.valueOf() ?? {}) as Record<string, string>,
 			tags: (x.tags?.valueOf() ?? {}) as string[],
 			date: Number(x.date)
@@ -157,7 +157,7 @@ export class DatabaseServicePrismaCockroach implements DatabaseService
 
 		return {
 			...result,
-			blocks: (result.blocks?.valueOf() ?? []) as Record<string, string>[],
+			blocks: (result.blocks?.valueOf() ?? []) as Record<string, Record<string, string>>,
 			meta: (result.meta?.valueOf() ?? {}) as Record<string, string>,
 			tags: (result.tags?.valueOf() ?? {}) as string[],
 			date: Number(result.date)

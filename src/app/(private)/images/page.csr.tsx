@@ -1,7 +1,7 @@
 'use client'
 
 import { addImagesToStorage, addImageToStorage, getImagesFromStorage, removeImagesFromStorage } from '@/app/(private)/images/localStorage'
-import imagesPageCreateProjectTrigger from '@/app/(private)/images/newImageTrigger'
+import { addNewImageCallback } from '@/app/(private)/images/newImageTrigger'
 import { InputText, ModalBase, ModalLoading, ModalNotification } from '@/components'
 import { ImageControllerCS } from '@/scripts/modules/controller/imageController'
 import { ImageDetailModel } from '@/scripts/modules/database/models/imageModel'
@@ -19,8 +19,6 @@ interface Props
 
 export function ImagesPageCsr(props: Props)
 {
-
-
 	const [isWorking, setIsWorking] = useState(false)
 	const theme = useTheme()
 	const isMobileMode = useMediaQuery(theme.breakpoints.down('md'))
@@ -38,6 +36,8 @@ export function ImagesPageCsr(props: Props)
 		name: '',
 		dataUrl: '',
 	})
+
+	useEffect(() => addNewImageCallback('ProjectPageCsr', () => uploadInputRef.current && uploadInputRef.current.click()), [])
 
 	// Cleanup Local Storage
 	useEffect(() =>
@@ -100,11 +100,6 @@ export function ImagesPageCsr(props: Props)
 	})
 
 	const uploadInputRef = useRef<HTMLInputElement>(null)
-
-	imagesPageCreateProjectTrigger.addSubscription('ProjectPageCsr', () =>
-	{
-		uploadInputRef.current && uploadInputRef.current.click()
-	})
 
 	function displayModalNotification(message: string, title?: string)
 	{

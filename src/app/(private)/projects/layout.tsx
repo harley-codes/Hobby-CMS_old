@@ -1,6 +1,6 @@
 'use client'
 
-import projectsPageCreateProjectTrigger from '@/app/(private)/projects/newProjectTrigger'
+import { triggerNewProjectCallbacks } from '@/app/(private)/projects/newProjectTrigger'
 import { PageHeader, SkeletonListItems } from '@/components'
 import { Alert, Box, Button } from '@mui/material'
 import { Stack } from '@mui/system'
@@ -11,7 +11,7 @@ export default function ProjectsLayout({ children }: Children)
 	return (
 		<>
 			<PageHeader headerText='Projects'>
-				<Button color="success" variant="contained" onClick={() => projectsPageCreateProjectTrigger.trigger()}>New Project</Button>
+				<Button color="success" variant="contained" onClick={() => triggerNewProjectCallbacks()}>New Project</Button>
 			</PageHeader>
 			<Stack component="main">
 				<Box mb={3}>

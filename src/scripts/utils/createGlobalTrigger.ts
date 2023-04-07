@@ -1,32 +1,27 @@
+'use client'
+
 export function createGlobalTrigger()
 {
-	class GlobalTrigger
+	const subscribers: Record<string, () => void> = {}
+
+	function addCallback(identifier: string, callbackHandler: () => void)
 	{
-		protected static instance: GlobalTrigger
-
-		private subscribers: Record<string, () => void> = {}
-
-		static get Instance(): GlobalTrigger
-		{
-			return this.instance || (this.instance = new GlobalTrigger())
-		}
-
-		addSubscription(identifier: string, callbackHandler: () => void)
-		{
-			this.subscribers[identifier] = callbackHandler
-		}
-
-		removeSubscription(identifier: string)
-		{
-			delete this.subscribers[identifier]
-		}
-
-		trigger()
-		{
-			Object.entries(this.subscribers).forEach(([, f]) => f())
-		}
+		subscribers[identifier] = callbackHandler
 	}
 
-	return GlobalTrigger
-}
+	function removeCallback(identifier: string)
+	{
+		delete subscribers[identifier]
+	}
 
+	function triggerCallbacks()
+	{
+		Object.entries(subscribers).forEach(([, f]) => f())
+	}
+
+	return {
+		addCallback,
+		removeCallback,
+		triggerCallbacks
+	}
+}

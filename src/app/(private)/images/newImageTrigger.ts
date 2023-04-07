@@ -1,5 +1,3 @@
 import { createGlobalTrigger } from '@/scripts/utils/createGlobalTrigger'
 
-const imagesPageCreateProjectTrigger = createGlobalTrigger().Instance
-
-export default imagesPageCreateProjectTrigger
+export const {addCallback: addNewImageCallback, triggerCallbacks: triggerNewImageCallbacks} = createGlobalTrigger()

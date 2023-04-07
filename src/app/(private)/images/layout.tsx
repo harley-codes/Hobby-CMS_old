@@ -1,6 +1,6 @@
 'use client'
 
-import imagesPageCreateProjectTrigger from '@/app/(private)/images/newImageTrigger'
+import { triggerNewImageCallbacks } from '@/app/(private)/images/newImageTrigger'
 import { PageHeader, SkeletonListItems } from '@/components'
 import { Alert, Box, Button } from '@mui/material'
 import { Stack } from '@mui/system'
@@ -11,7 +11,7 @@ export default function ImagesLayout({ children }: Children)
 	return (
 		<>
 			<PageHeader headerText='Images'>
-				<Button color="success" variant="contained" onClick={() => imagesPageCreateProjectTrigger.trigger()}>New Image</Button>
+				<Button color="success" variant="contained" onClick={() => triggerNewImageCallbacks()}>New Image</Button>
 			</PageHeader>
 			<Stack component="main">
 				<Box mb={3}>

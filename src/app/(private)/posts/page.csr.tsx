@@ -6,7 +6,7 @@ import { InputText, ModalBase, ModalLoading, ModalNotification, ModalTextInput }
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Alert, Box, Button, DialogContentText, Stack, Tooltip, Typography } from '@mui/material'
 
-import postsPageCreateProjectTrigger from '@/app/(private)/posts/newPostsTrigger'
+import { addNewPostCallback } from '@/app/(private)/posts/newPostsTrigger'
 import { PostBlocksEditModal } from '@/app/(private)/posts/postEditModal'
 import { InputDate } from '@/components/input/inputDate'
 import { InputSelect } from '@/components/input/inputSelect'
@@ -14,7 +14,7 @@ import { PostControllerCS } from '@/scripts/modules/controller/postController'
 import { PostBlocks, PostModelDetail } from '@/scripts/modules/database/models/postModel'
 import { compareObjectsSame } from '@/scripts/utils/comparer'
 import { PostStatus } from '@prisma/client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface Props
 {
@@ -24,12 +24,6 @@ interface Props
 
 export function PostsPageCsr({ projectRecords, postDetails }: Props)
 {
-	postsPageCreateProjectTrigger.addSubscription('ProjectPageCsr', () =>
-	{
-		setNewPostModelOpen(true)
-		setNewPostDetails({ name: '', projectId: selectedProject?.id })
-	})
-
 	const [isWorking, setIsWorking] = useState(false)
 	const [postsList, setPostsList] = useState(postDetails)
 	const [selectedProject, setSelectedProject] = useState<ProjectRecordModel | undefined>(projectRecords[0])
@@ -44,6 +38,13 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 	})
 
 	const [newPostDetails, setNewPostDetails] = useState({ name: '', projectId: undefined as string | undefined })
+
+	useEffect(() => addNewPostCallback('ProjectPageCsr', () =>
+	{
+		setNewPostModelOpen(true)
+		setNewPostDetails({ name: '', projectId: selectedProject?.id })
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}), [])
 
 	function displayModalNotification(message: string, title?: string)
 	{

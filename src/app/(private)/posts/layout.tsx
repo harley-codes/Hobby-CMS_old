@@ -1,6 +1,6 @@
 'use client'
 
-import postsPageCreateProjectTrigger from '@/app/(private)/posts/newPostsTrigger'
+import { triggerNewPostCallbacks } from '@/app/(private)/posts/newPostsTrigger'
 import { PageHeader, SkeletonListItems } from '@/components'
 import { Box, Button } from '@mui/material'
 import { Stack } from '@mui/system'
@@ -11,7 +11,7 @@ export default function PostsLayout({ children }: Children)
 	return (
 		<>
 			<PageHeader headerText='Posts'>
-				<Button color="success" variant="contained" onClick={() => postsPageCreateProjectTrigger.trigger()}>New Post</Button>
+				<Button color="success" variant="contained" onClick={() => triggerNewPostCallbacks()}>New Post</Button>
 			</PageHeader>
 			<Stack component="main">
 				<Suspense fallback={<>
