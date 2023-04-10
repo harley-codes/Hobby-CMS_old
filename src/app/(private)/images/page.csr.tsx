@@ -202,7 +202,7 @@ export function ImagesPageCsr(props: Props)
 	return (
 		<>
 			<Stack spacing={3}>
-				<ImageList cols={imageTableCols} gap={5}>
+				<ImageList cols={imageTableCols}>
 					{imageDetailsFiltered.map((imageDetail) =>
 						<ImageListItem key={imageDetail.id} sx={{ cursor: 'pointer' }}>
 							{imageDataUrls[imageDetail.id]
@@ -211,7 +211,6 @@ export function ImagesPageCsr(props: Props)
 									<img
 										src={imageDataUrls[imageDetail.id]}
 										alt='error'
-										style={{ width: '100%', objectFit: 'contain' }}
 										title={imageDetail.name}
 										loading='lazy'
 										onClick={() => setSelectedImage(imageDetail)}
