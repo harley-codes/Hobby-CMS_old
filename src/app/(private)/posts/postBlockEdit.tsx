@@ -1,4 +1,6 @@
+import { InputText } from '@/components'
 import { PostBlockTypes } from '@/scripts/data/postBlockTypes'
+import { Typography } from '@mui/material'
 
 type Props = {
 	data: Record<string, string>
@@ -20,7 +22,16 @@ export function PostBlockDynamicEdit({ data, onUpdate }: Props)
 
 function EditViewSpan(props: EditVewProps)
 {
+	function updateValueHandler(value: string)
+	{
+		props.data['value'] = value
+		props.onUpdate(props.data)
+	}
+
 	return (
-		<div>{props.data['type']}</div>
+		<div>
+			<Typography>Plain Text</Typography>
+			<InputText value={props.data['value']} onValueChange={(v) => updateValueHandler(v)} size='small' />
+		</div>
 	)
 }

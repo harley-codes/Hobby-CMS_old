@@ -2,7 +2,7 @@
 
 import { SxProps, TextField } from '@mui/material'
 
-type ValueChangeEvent = (value: string) => void;
+type ValueChangeEvent = (value: string) => void
 
 interface Props
 {
@@ -13,6 +13,7 @@ interface Props
 	fullWidth?: boolean
 	color?: 'error' | 'primary' | 'secondary' | 'info' | 'success' | 'warning'
 	sx?: SxProps
+	size?: 'small' | 'medium'
 }
 
 export function InputText(props: Props)
@@ -26,6 +27,7 @@ export function InputText(props: Props)
 			sx={props.sx}
 			fullWidth={props.fullWidth != false}
 			color={props.color}
+			size={props.size}
 		/>
 	)
 }

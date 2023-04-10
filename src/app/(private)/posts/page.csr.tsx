@@ -124,6 +124,36 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 		setIsWorking(false)
 	}
 
+	async function postBlocksUpdateHandler(blocks: PostBlocks)
+	{
+		if (!selectedPost) return
+
+		const post = selectedPost
+
+		setSelectedPostBlocks(undefined)
+		setIsWorking(true)
+
+		try
+		{
+			const controller = new PostControllerCS()
+			await controller.update(post.id, { blocks })
+
+			console.log(post)
+
+			const index = postsList.findIndex(x => x.id === post.id)
+			postsList[index] = post
+			setPostsList([...postsList])
+
+			displayModalNotification('Post Blocks Updated.')
+		}
+		catch (error: any)
+		{
+			displayModalNotification(error, 'Error')
+		}
+
+		setIsWorking(false)
+	}
+
 	async function postDeleteHandler(post: PostModelDetail)
 	{
 		setIsWorking(true)
@@ -247,7 +277,7 @@ export function PostsPageCsr({ projectRecords, postDetails }: Props)
 			/>
 			<PostBlocksEditModal
 				postBlocks={selectedPostBlocks}
-				onRequestSave={() => setSelectedPostBlocks(undefined)}
+				onRequestSave={(postBlocks) => postBlocksUpdateHandler(postBlocks)}
 				onRequestCancel={() => setSelectedPostBlocks(undefined)}
 			/>
 			<ModalTextInput

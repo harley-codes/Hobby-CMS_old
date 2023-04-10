@@ -24,7 +24,7 @@ export function PostBlocksEditModal(props: Props)
 	// Reset when props:blocks change.
 	useEffect(() =>
 	{
-		console.log('#', props.postBlocks)
+		// console.log('#', props.postBlocks)
 		setBlocks(props.postBlocks ?? {})
 		setNewBlockType(PostBlockTypes.Span)
 	}, [props.postBlocks])
@@ -77,7 +77,7 @@ export function PostBlocksEditModal(props: Props)
 						{Object.entries(blocks).map(([blockId, blockData], index) =>
 							<Card key={blockId} variant="outlined">
 								<CardContent>
-									{process.env.NEXT_PUBLIC_DEBUG_SHOW_IDS &&
+									{process.env.NEXT_PUBLIC_DEBUG_SHOW_IDS == 'true' &&
 										<Typography variant='caption'>ID: {blockId}</Typography>
 									}
 									<PostBlockDynamicEdit
@@ -96,7 +96,7 @@ export function PostBlocksEditModal(props: Props)
 						<Button variant="outlined" onClick={props.onRequestCancel}>Cancel</Button>
 					</Box>
 					<Button color='warning' disabled={!hasChanged()} variant="contained" onClick={() => setBlocks(props.postBlocks ?? {})}>Clear Changes</Button>
-					<Button color='success' disabled={!hasChanged()} variant="contained">Save Changes</Button>
+					<Button color='success' disabled={!hasChanged()} variant="contained" onClick={() => props.onRequestSave(blocks)}>Save Changes</Button>
 				</>
 			}
 		/>

@@ -24,3 +24,9 @@ export interface PostModelDetail
 }
 
 export type PostStatus = 'ACTIVE' | 'DISABLED' | 'HIDDEN'
+
+export const PostStatusOptions = {
+	ACTIVE: 'ACTIVE',
+	DISABLED: 'DISABLED',
+	HIDDEN: 'HIDDEN'
+}
